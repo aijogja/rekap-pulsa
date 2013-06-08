@@ -171,6 +171,5 @@ class Transaksi extends CI_Controller {
 		$data['totalnya']	= $this->transaksi_m->get_jumlah_total($where);
 		
 		$this->load->view('content/admin/export/export_transaksi', $data);
-	}
-	
+	}	
 }

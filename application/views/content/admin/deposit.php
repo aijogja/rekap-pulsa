@@ -92,9 +92,9 @@ if($flashdata['status'] == 'success'):
 <?php if($this->session->userdata('bulan')): ?>
 
 <h5>
-<div><span class="show_total">Terhutang</span> : <?php echo format_amount($totalnya['terhutang']['nominal']); ?></div>
-<div><span class="show_total">Lunas</span> : <?php echo format_amount($totalnya['lunas']['nominal']); ?></div>
-<div><span class="show_total">Totalnya</span> : <?php echo format_amount($totalnya['total']['nominal']); ?></div>
+<div><span class="show_total">Terhutang</span> : <?php echo format_amount($totalnya['terhutang']); ?></div>
+<div><span class="show_total">Lunas</span> : <?php echo format_amount($totalnya['lunas']); ?></div>
+<div><span class="show_total">Totalnya</span> : <?php echo format_amount($totalnya['total']); ?></div>
 </h5>
 
 	<table class="table table-condensed table-striped">
@@ -132,6 +132,10 @@ if($flashdata['status'] == 'success'):
     </tbody>
     </table>
     <?php echo !empty($paging)? $paging : '' ; ?>
+    
+    <?php if(!empty($data_query)):?>
+	<a href="<?php echo site_url('admin/'.$this->uri->segment(2).'/export'); ?>" class="btn btn-success btn-mini">Export .xls</a>
+    <?php endif ?>
     
 <?php endif; ?>
 <?php endif; ?>

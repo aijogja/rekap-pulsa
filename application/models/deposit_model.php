@@ -80,15 +80,14 @@ class Deposit_model extends CI_Model {
 		}
     }
 		
-	function get_jumlah_total($where=array())
+	function get_jumlah_total()
     {
-		$this->db->select_sum('nominal');
+		$this->db->select("SUM(IF(status = '0', nominal,'')) as terhutang", false);
+		$this->db->select("SUM(IF(status = '1', nominal,'')) as lunas", false);
+		$this->db->select("SUM(nominal) as total", false);
 		$this->db->from('deposit');
 		$this->db->where('tgl >= ',$this->start_bulan);
-		$this->db->where('tgl <= ',$this->end_bulan);
-		if($where){
-			$this->db->where($where);
-		}
+		$this->db->where('tgl <= ',$this->end_bulan);		
 		
 		$query = $this->db->get();
 		if ($query->num_rows() > 0){

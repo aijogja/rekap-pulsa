@@ -27,17 +27,9 @@ class Deposit extends CI_Controller {
 		$config['uri_segment'] 		= $uri_offset;		
 		$this->pagination->initialize($config);	
 				
-		$data_query = $this->deposit_m->get_deposit($this->limit, $offset);		
+		$data_query = $this->deposit_m->get_deposit($this->limit, $offset);				
+		$totalan = $this->deposit_m->get_jumlah_total();		
 		
-		$sum_as = array('terhutang'=>'0', 'lunas'=>'1', 'total'=>NULL);
-		foreach($sum_as as $jenis=>$status){
-			$where = array();
-			if($status != NULL){
-				$where = array('status' => $status);
-			}
-			$totalan[$jenis]=$this->deposit_m->get_jumlah_total($where);
-		}
-		//print_r($totalan); 		
 		$data = array (			
 			'data_query'	=> $data_query,
 			'paging'		=> $this->pagination->create_links(),
@@ -88,8 +80,6 @@ class Deposit extends CI_Controller {
 			if($this->input->post('tgl_bayar')){
 				$tgl_bayar = strtotime($this->input->post('tgl_bayar'));
 			}
-			//$status = $this->input->post('status');
-			//if($status == 1){$tgl_bayar = strtotime($this->input->post('tgl_bayar'));}
 					
 			$simpan_data = array(
 				'nominal'	=> $this->input->post('nominal'),
@@ -122,5 +112,13 @@ class Deposit extends CI_Controller {
 		$this->session->set_userdata($sesion_data);
 		
 		echo site_url('admin/deposit/view');
+	}
+	
+	public function export()
+	{
+		$data['data_query'] = $this->deposit_m->get_deposit($this->deposit_m->count_deposit(), 0);
+		$data['totalnya']	= $this->deposit_m->get_jumlah_total();
+		
+		$this->load->view('content/admin/export/export_deposit', $data);
 	}
 }
