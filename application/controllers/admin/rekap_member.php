@@ -44,39 +44,41 @@ class Rekap_member extends CI_Controller {
 		admin_template_view($data);
 	}
 		
-	// Menampilkan hurangnya detail dari masing-masing member
+	// Menampilkan hurangnya detail dari masing-masing member	
 	public function hutangnya($id='')
 	{	
-		$detail = $this->transaksi_m->get_hutang_member_detail($id);		
-				
+		$detail = $this->transaksi_m->get_hutang_member_detail($id);						
 		$where = array('status'=>'0','membernya'=>$id);
 		$total_hutang = $this->transaksi_m->get_jumlah_total($where, FALSE);
-		$member = $this->member_m->get_member_detail($id);
-		
-		$i=0;
-		$dialog = "<div id='dialog'>";
-		$dialog .= "<table class='table table-condensed'><thead><tr><th>No</th><th>Tanggal</th><th>Kode</th><th>No Tujuan</th><th>Total</th></tr></thead><tbody>";
-		if($detail):
-			foreach($detail as $dt): $i++;			
-				$dialog .= "<tr><td>".$i."</td><td>".date('d/m/Y',$dt['tgl'])."</td><td>".$dt['kode']."</td><td>".$dt['no_tujuan']."</td><td>".format_amount($dt['total'])."</td></tr>";			
-			endforeach; 
-		endif;
-		$dialog .= "</tbody><tfoot>";
+		$member = $this->member_m->get_member_detail($id);		
 		$totalnya = $total_hutang['total']+$member['hutang_2012']-$member['balance'];
 		
-		$dialog .= "<tr><td colspan='3'></td><td>Total</td><td style='border-top:1px solid #000'>".format_amount($total_hutang['total'])."</td></tr>";
-		if($member['hutang_2012']) {
-			$dialog .= "<tr><td colspan='3'></td><td>Hutang 2012</td><td>".format_amount($member['hutang_2012'])."</td></tr>";
-		}
-		$dialog .= "<tr><td colspan='3'></td><td>Balance</td><td style='border-bottom:1px solid #000'>".format_amount($member['balance'])."</td></tr>";
-		$dialog .= "<tr><td colspan='3'></td><td>Total Hutang</td><td>".format_amount($totalnya)."</td></tr></tfoot></table>";		
+		// <tbody>
+			$i=0; $tbody = "";
+			if($detail):
+				foreach($detail as $dt): $i++;			
+					$tbody .= "<tr><td>".$i."</td><td>".date('d/m/Y',$dt['tgl'])."</td><td>".$dt['kode']."</td><td>".$dt['no_tujuan']."</td><td>".format_amount($dt['total'])."</td></tr>";			
+				endforeach; 
+			else:
+				$tbody .= "<td colspan='5' class='nodata muted'>No Data</td>";			
+			endif;		
+		// </tbody>
+		// <tfoot>	
+			$tfoot = "";	
+			$tfoot .= "<tr><td colspan='3'></td><td>Total</td><td style='border-top:1px solid #000'>".format_amount($total_hutang['total'])."</td></tr>";
+			if($member['hutang_2012']) {
+				$tfoot .= "<tr><td colspan='3'></td><td>Hutang 2012</td><td>".format_amount($member['hutang_2012'])."</td></tr>";
+			}
+			$tfoot .= "<tr><td colspan='3'></td><td>Balance</td><td style='border-bottom:1px solid #000'>".format_amount($member['balance'])."</td></tr>";
+			$tfoot .= "<tr><td colspan='3'></td><td>Total Hutang</td><td>".format_amount($totalnya)."</td></tr>";			
+		// </tfoot>
+		// button email
+		$button = '';
 		if(!empty($member['email'])){
-			$dialog .= "<a href='".site_url('admin/'.$this->uri->segment(2).'/send_email/'.$id)."' class='btn btn-success btn-mini'>Sent Email</a></div>";
-		} else {
-			$dialog .= "</div>";
+			$button = "<a href='".site_url('admin/'.$this->uri->segment(2).'/send_email/'.$id)."' class='btn btn-success btn-mini send_mail pull-left' onClick='send_tagihan(); return false;'>Sent Email</a>";
 		}
 		
-		echo $dialog;
+		echo json_encode(array('tbody' => $tbody, 'tfoot' => $tfoot, 'button' => $button));
 	}
 	
 	public function send_email($idmember='')
@@ -100,7 +102,10 @@ class Rekap_member extends CI_Controller {
 		$this->email->to($detail['email']); 
 		$this->email->subject('Tagihan Pulsa');
 		$this->email->message($this->load->view('content/admin/mail_tagihan',$data,TRUE));		
-		$this->email->send();		
-		redirect('admin');
+		if($this->email->send()){
+			echo 'sukses';
+		} else {
+			echo 'gagal';
+		}
 	}
 }

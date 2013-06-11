@@ -92,10 +92,7 @@
 <?php if($this->session->userdata('logged_in') === TRUE): ?>
 <script type="text/JavaScript">
 $(function(){ 
-	$('.sent_mail').click(function(){	
-		alert('cek');		
-		return false;
-	});
+	
 });
 
 function confirmDelete(){
@@ -129,17 +126,38 @@ function get_transaksi(urlnya,month){
 }
 
 function hutangnya(id){		
-	$('#dialog').remove(); 
-	var a="<?php echo site_url('admin/rekap_member/hutangnya') ?>" + "/" + id;
+	var url="<?php echo site_url('admin/rekap_member/hutangnya') ?>" + "/" + id;	
 	$.ajax ({
-		url: a ,
-		success: function(dataku){
-			$('#dialog_message').append(dataku);
-			$( "#dialog_message" ).dialog( "open" );
-			return false;
+		url: url ,
+		success: function(msg){
+			var data = $.parseJSON(msg);
+			$(".modal-footer").html(data.button);
+			$("#detail_hutang_body").html(data.tbody);
+			$("#detail_hutang_foot").html(data.tfoot);
+			$('#hutangnya').modal({
+				show : true,
+				backdrop : 'static',
+			});
 		}
-	});
+	});	
 }
+
+function send_tagihan(){
+	var url=$('.send_mail').attr("href");
+	$.ajax ({
+		url: url ,
+		success: function(msg){
+			if(msg == 'sukses'){
+				alert('Tagihan telah dikirim ke email member.');
+			} else {
+				alert('Email gagal terkirim.');
+			}
+			
+			$('#hutangnya').modal('hide'); 		
+		}
+	});			
+}
+
 function tampilkan_tglbayar(status){
 	if(status == 1){
 		$("#tgl_bayar").show();
@@ -276,20 +294,6 @@ function tampilkan_tglbayar(status){
 		});
 		$( "#nama_member" ).autocomplete({
 			source: nama_member
-		});
-	});
-</script>
-<!--JQuery UI Dialog-->
-<script>
-	$(function() {
-		// a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
-		$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog_message" ).dialog({
-			autoOpen: false,
-			modal: true,
-			closeOnEscape: true,
-			width:500,
 		});
 	});
 </script>  

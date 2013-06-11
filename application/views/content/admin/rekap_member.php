@@ -34,6 +34,31 @@
 </table>
 <?php echo !empty($paging)? $paging : '' ; ?>
 
-<div id="dialog_message" title="Detail Hutang">
-	
+<!-- Modal -->
+<div id="hutangnya" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Hutanf" aria-hidden="true">
+    <div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    	<h5 id="myModalLabel">Detail Hutang</h5>
+    </div>
+    <div class="modal-body">
+		<table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Kode</th>
+                    <th>No Tujuan</th>
+                    <th>Total</th>                    
+            	</tr>
+            </thead>
+            <tbody id="detail_hutang_body">
+                
+            </tbody>  
+            <tfoot id="detail_hutang_foot">
+            </tfoot>  
+        </table>
+    </div>
+    <div class="modal-footer">
+    </div>
 </div>
+
