@@ -100,6 +100,7 @@ class Rekap_member extends CI_Controller {
 		$this->email->to($detail['email']); 
 		$this->email->subject('Tagihan Pulsa');
 		$this->email->message($this->load->view('content/admin/mail_tagihan',$data,TRUE));		
-		//$this->email->send();		
+		$this->email->send();		
+		redirect('admin');
 	}
 }
