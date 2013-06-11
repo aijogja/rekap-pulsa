@@ -7,7 +7,7 @@
 		$header .= "Total"."\t Rp. ".number_format($totalnya['total'], 2)."\r\n";	
 		$header .= "No"."\t"."Tanggal"."\t"."Nama"."\t"."Kode"."\t"."No Tujuan"."\t"."Harga"."\r\n";
 	foreach($data_query as $dt):			
-		$header .= $i++."\t".date('d/m/Y',$dt['tgl'])."\t".$dt['nama_member']."\t".$dt['kode']."\t".$dt['no_tujuan']."\t".$dt['total']."\r\n";
+		$header .= $i++."\t".date('d/M/Y',$dt['tgl'])."\t".$dt['nama_member']."\t".$dt['kode']."\t".$dt['no_tujuan']."\t".$dt['total']."\r\n";
 	endforeach;
 	endif;
 	

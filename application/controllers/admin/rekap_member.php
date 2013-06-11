@@ -8,6 +8,7 @@ class Rekap_member extends CI_Controller {
 		restrict_admin();
 		$this->load->model('transaksi_model','transaksi_m');
 		$this->load->model('member_model','member_m');
+		$this->load->model('admin_manage_model','admin_manage_m');
 		$this->limit	= $this->config->item('limit');
     }
 	
@@ -44,9 +45,10 @@ class Rekap_member extends CI_Controller {
 	}
 		
 	// Menampilkan hurangnya detail dari masing-masing member
-	public function hutangnya($id)
+	public function hutangnya($id='')
 	{	
-		$detail = $this->transaksi_m->get_hutang_member_detail($id);
+		$detail = $this->transaksi_m->get_hutang_member_detail($id);		
+				
 		$where = array('status'=>'0','membernya'=>$id);
 		$total_hutang = $this->transaksi_m->get_jumlah_total($where, FALSE);
 		$member = $this->member_m->get_member_detail($id);
@@ -55,9 +57,9 @@ class Rekap_member extends CI_Controller {
 		$dialog = "<div id='dialog'>";
 		$dialog .= "<table class='table table-condensed'><thead><tr><th>No</th><th>Tanggal</th><th>Kode</th><th>No Tujuan</th><th>Total</th></tr></thead><tbody>";
 		if($detail):
-		foreach($detail as $dt): $i++;			
-			$dialog .= "<tr><td>".$i."</td><td>".date('d/m/Y',$dt['tgl'])."</td><td>".$dt['kode']."</td><td>".$dt['no_tujuan']."</td><td>".format_amount($dt['total'])."</td></tr>";			
-		endforeach; 
+			foreach($detail as $dt): $i++;			
+				$dialog .= "<tr><td>".$i."</td><td>".date('d/m/Y',$dt['tgl'])."</td><td>".$dt['kode']."</td><td>".$dt['no_tujuan']."</td><td>".format_amount($dt['total'])."</td></tr>";			
+			endforeach; 
 		endif;
 		$dialog .= "</tbody><tfoot>";
 		$totalnya = $total_hutang['total']+$member['hutang_2012']-$member['balance'];
@@ -67,7 +69,37 @@ class Rekap_member extends CI_Controller {
 			$dialog .= "<tr><td colspan='3'></td><td>Hutang 2012</td><td>".format_amount($member['hutang_2012'])."</td></tr>";
 		}
 		$dialog .= "<tr><td colspan='3'></td><td>Balance</td><td style='border-bottom:1px solid #000'>".format_amount($member['balance'])."</td></tr>";
-		$dialog .= "<tr><td colspan='3'></td><td>Total Hutang</td><td>".format_amount($totalnya)."</td></tr></tfoot></table></div>";
+		$dialog .= "<tr><td colspan='3'></td><td>Total Hutang</td><td>".format_amount($totalnya)."</td></tr></tfoot></table>";		
+		if(!empty($member['email'])){
+			$dialog .= "<a href='".site_url('admin/'.$this->uri->segment(2).'/send_email/'.$id)."' class='btn btn-success btn-mini'>Sent Email</a></div>";
+		} else {
+			$dialog .= "</div>";
+		}
+		
 		echo $dialog;
+	}
+	
+	public function send_email($idmember='')
+	{				
+		$detail = $this->member_m->get_member_detail($idmember);
+		if(!$detail){
+			redirect('');
+		}				
+
+		$superadmin = $this->admin_manage_m->get_admin_detail(0);
+		$email = get_setting('email');
+		$sender = ($email)? $email : $superadmin['email'];
+		$from_name = get_setting('nama_celluler');
+				
+		$data['member'] = $detail;
+		$data['tagihan'] = $this->transaksi_m->get_hutang_member_detail($detail['idmember']);
+		$data['total_hutang'] = $this->transaksi_m->get_jumlah_total(array('status'=>'0','membernya'=>$detail['idmember']), FALSE);
+
+		$this->email->clear();
+		$this->email->from($sender, $from_name);
+		$this->email->to($detail['email']); 
+		$this->email->subject('Tagihan Pulsa');
+		$this->email->message($this->load->view('content/admin/mail_tagihan',$data,TRUE));		
+		//$this->email->send();		
 	}
 }

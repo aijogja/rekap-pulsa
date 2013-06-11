@@ -106,8 +106,7 @@ class Admin_manage extends CI_Controller {
 	{
 		$data_detail = $this->admin_manage_m->get_admin_by_email($this->session->userdata('email'));
 		if($this->input->post('simpan')){			
-			$this->form_validation->set_rules('user', '', '');
-			$this->form_validation->set_rules('password', 'New Password', 'required|callback_pass_check');
+			$this->form_validation->set_rules('password', 'New Password', 'required');
 			$this->form_validation->set_rules('repassword', 'Confirm Password', 'required|matches[password]');
 					
 			if ($this->form_validation->run() == TRUE){
@@ -120,14 +119,12 @@ class Admin_manage extends CI_Controller {
 		}
 		
 		$data = array (
-			'main_content' => 'change_password',
-			
-			'default'		=> $data_detail,
+			'main_content' => 'change_password'
 		);
 		admin_template_view($data);
 	}
 	
-	public function pass_check($pass)
+	/*public function pass_check($pass)
 	{
 		$email = $this->session->userdata('email');
 		$data_detail = $this->admin_manage_m->admin_login($email,salt_encrypt($email,$pass));
@@ -138,6 +135,6 @@ class Admin_manage extends CI_Controller {
 		} else{
 			return TRUE;
 		}
-	}
+	}*/
 	
 }

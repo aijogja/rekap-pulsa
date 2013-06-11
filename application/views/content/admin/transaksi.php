@@ -24,6 +24,9 @@ if($flashdata['status'] == 'success'):
     <?php if($this->uri->segment(3)=='edit'): ?>
     <li class='active'><a href="<?php echo current_url() ?>">Edit Transaksi</a></li>
     <?php endif; ?>
+    <?php if($this->uri->segment(3)=='cari'): ?>
+    <li class='active'><a href="<?php echo current_url() ?>">Cari</a></li>
+    <?php endif; ?>
 </ul>
 <!-- End Menampilkan Tab -->
 

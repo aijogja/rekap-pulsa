@@ -23,13 +23,7 @@ if($flashdata['status'] == 'success'):
 <?php endif?>
                 
 <form action="" method="post">
-    <fieldset>        
-    	<div class="control-group">
-            <label class="control-label">Username</label>                
-            <div class="controls">
-            <input type="text" name="user" class="span8" value="<?php echo set_value('user', isset($default['user'])?$default['user']:''); ?>"  />
-            </div>
-        </div>
+    <fieldset>   
         <div class="control-group">
             <label class="control-label">New Password</label>                
             <div class="controls">

@@ -92,7 +92,10 @@
 <?php if($this->session->userdata('logged_in') === TRUE): ?>
 <script type="text/JavaScript">
 $(function(){ 
-	
+	$('.sent_mail').click(function(){	
+		alert('cek');		
+		return false;
+	});
 });
 
 function confirmDelete(){
@@ -285,7 +288,7 @@ function tampilkan_tglbayar(status){
 		$( "#dialog_message" ).dialog({
 			autoOpen: false,
 			modal: true,
-			closeOnEscape: false,
+			closeOnEscape: true,
 			width:500,
 		});
 	});

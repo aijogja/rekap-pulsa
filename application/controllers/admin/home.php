@@ -139,8 +139,7 @@ class Home extends CI_Controller {
 			$this->email->from($sender, $from_name);
 			$this->email->to($m['email']); 
 			$this->email->subject('Tagihan Pulsa');
-			$this->email->message($this->load->view('content/admin/mail_tagihan',$data,TRUE));
-			
+			$this->email->message($this->load->view('content/admin/mail_tagihan',$data,TRUE));			
 			$this->email->send();
 		}		
 	}
